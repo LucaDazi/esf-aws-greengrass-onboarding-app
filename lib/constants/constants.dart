@@ -1,0 +1,6 @@
+const String SECURE_DESCRIPTION =
+    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus sit amet nunc rutrum, maximus ex ut, tristique est. Sed eu pretium turpis. Etiam porttitor tincidunt consequat. Integer tincidunt, est nec auctor hendrerit, arcu augue pulvinar arcu, quis lacinia sapien ipsum non neque. Duis semper blandit urna sed mollis. Quisque laoreet nibh tortor, imperdiet molestie purus vulputate et. Nunc at bibendum metus.';
+const String ENROLL_DESCRIPTION =
+    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus sit amet nunc rutrum, maximus ex ut, tristique est. Sed eu pretium turpis. Etiam porttitor tincidunt consequat. Integer tincidunt, est nec auctor hendrerit, arcu augue pulvinar arcu, quis lacinia sapien ipsum non neque. Duis semper blandit urna sed mollis. Quisque laoreet nibh tortor, imperdiet molestie purus vulputate et. Nunc at bibendum metus.';
+const String CONNECT_DESCRIPTION =
+    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus sit amet nunc rutrum, maximus ex ut, tristique est. Sed eu pretium turpis. Etiam porttitor tincidunt consequat. Integer tincidunt, est nec auctor hendrerit, arcu augue pulvinar arcu, quis lacinia sapien ipsum non neque. Duis semper blandit urna sed mollis. Quisque laoreet nibh tortor, imperdiet molestie purus vulputate et. Nunc at bibendum metus.';
