@@ -1,3 +1,4 @@
+import 'package:esf_aws_greengrass_onboarding_app/driver_form.dart';
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
@@ -15,7 +16,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
-          title: const Text('Greengrass Provisioning Wizard'),
+          title: const Text('Connect to a Modbus Field Device'),
           actions: [
             if (_currentPage == 0)
               IconButton(
@@ -25,25 +26,19 @@ class _OnboardingPageState extends State<OnboardingPage> {
           ],
         ),
         body: Container(
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage('background.png'),
+              fit: BoxFit.fill,
+            ),
+          ),
           padding: const EdgeInsets.only(bottom: 80),
           child: PageView(
             controller: _controller,
             children: [
-              buildPage(
-                  urlImage: 'TestImg.png',
-                  title: 'SECURE',
-                  subtitle:
-                      'Create the security stack. ESF bla bla bla EST bla bla bla Grengrass bla bla bla'),
-              buildPage(
-                  urlImage: 'TestImg.png',
-                  title: 'ENROLL',
-                  subtitle:
-                      'Create the security stack. ESF bla bla bla EST bla bla bla Grengrass bla bla bla'),
-              buildPage(
-                  urlImage: 'TestImg.png',
-                  title: 'CONNECT',
-                  subtitle:
-                      'Create the security stack. ESF bla bla bla EST bla bla bla Grengrass bla bla bla'),
+              DriverForm(),
+              const Text('Prova 2'),
+              const Text('Prova 3'),
             ],
           ),
         ),

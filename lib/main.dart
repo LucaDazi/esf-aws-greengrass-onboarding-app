@@ -1,9 +1,18 @@
-import 'package:esf_aws_greengrass_onboarding_app/checkout.dart';
-import 'package:esf_aws_greengrass_onboarding_app/onboarding.dart';
 import 'package:esf_aws_greengrass_onboarding_app/wizard.dart';
 import 'package:flutter/material.dart';
+import 'dart:io';
+
+class MyHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
+  }
+}
 
 void main() {
+  HttpOverrides.global = MyHttpOverrides();
   runApp(const MyApp());
 }
 
@@ -14,7 +23,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Greengrass Onboarding',
       theme: ThemeData(
         // This is the theme of your application.
         //

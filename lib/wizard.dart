@@ -1,6 +1,16 @@
+/*
+import 'package:dio/adapter.dart';
+import 'package:dio/adapter_browser.dart';
+import 'package:dio/dio.dart' as http;
+*/
+import 'dart:convert';
+import 'dart:html';
+import 'dart:io';
+
 import 'package:esf_aws_greengrass_onboarding_app/onboarding.dart';
 import 'package:flutter/material.dart';
 import 'constants/constants.dart' as constants;
+import 'package:http/http.dart' as http;
 
 class OnboardingWizard extends StatefulWidget {
   const OnboardingWizard({super.key});
@@ -10,6 +20,21 @@ class OnboardingWizard extends StatefulWidget {
 }
 
 class _OnboardingWizardState extends State<OnboardingWizard> {
+  bool _workingSecure = false;
+  bool _workingEnroll = false;
+  bool _workingConnect = false;
+  bool _panelSecureGreen = false;
+  bool _panelEnrollGreen = false;
+  bool _panelConnectGreen = false;
+  String _secure = '';
+  String _enroll = '';
+  String _connect = '';
+  bool _showButton = true;
+  bool _completed = false;
+
+  final String _basicAuth =
+      'Basic ${base64.encode(utf8.encode('admin:We!come12345'))}';
+
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
@@ -39,33 +64,59 @@ class _OnboardingWizardState extends State<OnboardingWizard> {
               buildPage(
                 panelIcon: Icons.security,
                 title: 'SECURE',
-                subtitle: constants.SECURE_DESCRIPTION,
-                greyedOut: false,
-                working: false,
+                subtitle: _secure,
+                greyedOut: !_panelSecureGreen,
+                working: _workingSecure,
               ),
               buildPage(
                 panelIcon: Icons.memory,
                 title: 'ENROLL',
-                subtitle: constants.ENROLL_DESCRIPTION,
-                greyedOut: false,
-                working: false,
+                subtitle: _enroll,
+                greyedOut: !_panelEnrollGreen,
+                working: _workingEnroll,
               ),
               buildPage(
                 panelIcon: Icons.cloud_sync,
                 title: 'CONNECT',
-                subtitle: constants.CONNECT_DESCRIPTION,
-                greyedOut: true,
-                working: false,
+                subtitle: _connect,
+                greyedOut: !_panelConnectGreen,
+                working: _workingConnect,
               ),
             ],
           ),
         ),
-        floatingActionButton: FloatingActionButton.large(
-          onPressed: () {},
-          tooltip: 'Start wizard!',
-          child: const Icon(Icons.start),
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+        floatingActionButton: _showButton
+            ? FloatingActionButton.large(
+                onPressed: () {
+                  setState(() {
+                    _workingSecure = true;
+                    _panelSecureGreen = true;
+                    _showButton = false;
+                    _secure = constants.secureDescription;
+                  });
+                  steps().then((value) => {
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(SnackBar(content: Text(value)))
+                      });
+                },
+                tooltip: 'Start wizard!',
+                child: const Icon(Icons.start),
+              )
+            : _completed
+                ? FloatingActionButton.large(
+                    onPressed: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (BuildContext context) {
+                        return const OnboardingPage();
+                      }));
+                    },
+                    tooltip: 'Go to Driver setup',
+                    child: const Icon(Icons.device_hub),
+                  )
+                : null,
+        floatingActionButtonLocation: _completed
+            ? FloatingActionButtonLocation.endFloat
+            : FloatingActionButtonLocation.centerFloat,
       );
 
   Widget buildPage({
@@ -110,6 +161,87 @@ class _OnboardingWizardState extends State<OnboardingWizard> {
                 ),
         ),
       );
+
+  Future<String> step(int stepNumber) async {
+    try {
+      Location currentLocation = window.location;
+
+      final url = Uri.https(
+          currentLocation.host, '/services/greengrass/test/step$stepNumber');
+
+      final response = await http.get(url, headers: {
+        HttpHeaders.authorizationHeader: _basicAuth,
+        HttpHeaders.acceptHeader: '*/*',
+        HttpHeaders.accessControlAllowOriginHeader: '*'
+      });
+
+      if (response.statusCode == 200) {
+        return response.body;
+      } else {
+        return "error in response";
+      }
+    } catch (e) {
+      return FlutterErrorDetails(exception: e).exceptionAsString();
+    }
+  }
+
+  Future<String> steps() async {
+    String result = await step(1);
+    if (result.contains('Security Stack created')) {
+      //if (result.contains('XMLHttpRequest error')) {
+      result = "false";
+      int trials = 10;
+      while (!result.contains('Enorllment complete!')) {
+        await Future.delayed(const Duration(seconds: 5));
+        setState(() {
+          ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Trial number ${11 - trials}')));
+        });
+        trials--;
+        if (trials <= 0) {
+          break;
+        }
+        result = await step(3);
+      }
+      setState(() {
+        _workingSecure = false;
+        _workingEnroll = true;
+        _panelEnrollGreen = true;
+        _enroll = constants.enrollDescription;
+      });
+      result = await step(4);
+      await Future.delayed(const Duration(seconds: 5));
+      setState(() {
+        _workingEnroll = false;
+        _workingConnect = true;
+        _panelConnectGreen = true;
+        _connect = constants.connectDescription;
+      });
+      result = await step(5);
+      await Future.delayed(const Duration(seconds: 5));
+      setState(() {
+        _workingConnect = false;
+        //_showButton = true;
+        _completed = true;
+      });
+
+      return 'Greengrass successfully provisioned!';
+    }
+
+    setState(() {
+      _workingConnect = false;
+      _workingEnroll = false;
+      _workingSecure = false;
+      _showButton = true;
+      _panelConnectGreen = false;
+      _panelEnrollGreen = false;
+      _panelSecureGreen = false;
+      _showButton = false;
+      _completed = true;
+    });
+
+    return 'ERROR during provisioning!';
+  }
 }
 
 class PagePanelWidget extends StatelessWidget {
@@ -141,7 +273,10 @@ class PagePanelWidget extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const SizedBox(height: 16),
+            const SizedBox(
+              height: 16,
+              width: double.infinity,
+            ),
             working
                 ? const CircularProgressIndicator(
                     color: Colors.black87,

@@ -1,6 +1,6 @@
-const String SECURE_DESCRIPTION =
-    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus sit amet nunc rutrum, maximus ex ut, tristique est. Sed eu pretium turpis. Etiam porttitor tincidunt consequat. Integer tincidunt, est nec auctor hendrerit, arcu augue pulvinar arcu, quis lacinia sapien ipsum non neque. Duis semper blandit urna sed mollis. Quisque laoreet nibh tortor, imperdiet molestie purus vulputate et. Nunc at bibendum metus.';
-const String ENROLL_DESCRIPTION =
-    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus sit amet nunc rutrum, maximus ex ut, tristique est. Sed eu pretium turpis. Etiam porttitor tincidunt consequat. Integer tincidunt, est nec auctor hendrerit, arcu augue pulvinar arcu, quis lacinia sapien ipsum non neque. Duis semper blandit urna sed mollis. Quisque laoreet nibh tortor, imperdiet molestie purus vulputate et. Nunc at bibendum metus.';
-const String CONNECT_DESCRIPTION =
-    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus sit amet nunc rutrum, maximus ex ut, tristique est. Sed eu pretium turpis. Etiam porttitor tincidunt consequat. Integer tincidunt, est nec auctor hendrerit, arcu augue pulvinar arcu, quis lacinia sapien ipsum non neque. Duis semper blandit urna sed mollis. Quisque laoreet nibh tortor, imperdiet molestie purus vulputate et. Nunc at bibendum metus.';
+const String secureDescription =
+    'ESF is creating the needed internal components for securing the connections. The components are generating a certificate using the EST Enrollment provided by the factory configuration.';
+const String enrollDescription =
+    'ESF is controlling Greengrass. The process will stop greengrass if it is already executing, and will then update the configuration with the newly created certificates and IDs.';
+const String connectDescription =
+    'ESF is creating all the needed components for connecting itself to Greengrass as a local device.';
